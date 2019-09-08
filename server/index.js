@@ -5,6 +5,8 @@ const app = express();
 app.use(require('cors')()); //跨域
 app.use(express.json()); //json
 
+app.use('/uploads', express.static(__dirname + '/uploads'))
+
 require('./plugins/db')(app);
 require('./routes/admin')(app);
 
