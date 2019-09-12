@@ -20,6 +20,16 @@
         </template>
       </el-table-column>
     </el-table>
+    <el-pagination
+      style="margin-top: 2rem; float: right;"
+      @size-change="pageSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="currentPage"
+      :page-sizes="pageSizes"
+      :page-size="pagesize"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="totalCount">
+    </el-pagination>
   </div>
 </template>
 
@@ -27,13 +37,39 @@
 export default {
   data() {
     return {
-      items: []
+      items: [],
+      firstid: '',
+      lastid: '',
+      pageSizes: [10, 20, 50, 100],
+      pagesize: 10,
+      querySize: 0,
+      currentPage: 1,
+      totalCount: 0,
     };
   },
   methods: {
+    pageSizeChange(val){
+      this.pagesize = val
+      this.currentPage = 1
+      this.querySize = this.pagesize * this.currentPage
+      this.lastid = ''
+      this.fetch()
+    },
+    handleCurrentChange(val){
+      this.currentPage = val
+      this.fetch()
+    },
     async fetch() {
-      const res = await this.$http.get('rest/items');
-      this.items = res.data;
+      const res = await this.$http.get('rest/items', {
+        params: {
+          lastid: this.lastid, 
+          pagesize: this.pagesize
+          }
+        });
+      this.items = res.data.datas
+      this.totalCount = res.data.totalCount
+      this.firstid
+      this.lastid = this.items.length > 0 && this.items[this.items.length - 1]._id
     },
     async remove(row) {
       this.$confirm(`是否确定要删除装备 "${row.name}"?`, '提示', {

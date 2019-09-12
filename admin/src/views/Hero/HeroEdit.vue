@@ -140,6 +140,7 @@ export default {
         usageTips: '',
         battleTips: '',
         teamTips: '',
+        skills: [],
         
       },
       categories: [],
